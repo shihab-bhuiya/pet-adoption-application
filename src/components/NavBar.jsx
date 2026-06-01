@@ -11,12 +11,12 @@ const NavBar = () => {
     
 
     return (
-        <nav className='flex justify-between p-4'>
+        <nav className='flex items-center justify-between p-4'>
             <div>
-                <h1 className='btn btn-soft btn-accent'><Link href={'/'}>PetHeaven</Link></h1>
+                <h1 className='btn text-3xl btn-soft btn-accent'><Link href={'/'}>PetHeaven</Link></h1>
             </div>
             <div>
-                <ul className='flex gap-3'>
+                <ul className='flex gap-4 text-lg items-center'>
                     <li> <Link href={'/'}>Home</Link></li>
                     <li> <Link href={'/all-pets'}>All Pets</Link></li>
                 </ul>
