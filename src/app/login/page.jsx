@@ -21,7 +21,7 @@ export default function Login() {
     callbackURL: "/",
 });
 if(data){
-    toast(data.message);
+    toast("Login successful");
 
     redirect('/');
 }
