@@ -2,6 +2,9 @@ import Link from 'next/link';
 import React from 'react';
 
 const NavBar = () => {
+
+    
+
     return (
         <nav className='flex justify-between p-4'>
             <div>
