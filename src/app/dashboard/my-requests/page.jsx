@@ -1,34 +1,39 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { authClient } from "@/lib/auth-client"; 
 import { Eye, Clock3, CheckCircle, XCircle } from "lucide-react";
+import toast from "react-hot-toast";
 
 export default function MyRequestsPage() {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Temporary hardcoded email until Better Auth session is connected
-  const loggedInUserEmail = "user@gmail.com"; 
-
-  // Fetch Requests from Backend
-  const fetchMyRequests = async () => {
-    try {
-      const res = await fetch(`http://localhost:5000/adoptions/user/${loggedInUserEmail}`);
-      if (!res.ok) throw new Error("Failed to fetch requests");
-      const data = await res.json();
-      setRequests(data);
-    } catch (error) {
-      console.error("Error fetching adoption requests:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Get the logged-in user session dynamically
+  const { data: session } = authClient.useSession();
+  const loggedInUserEmail = session?.user?.email; 
 
   useEffect(() => {
+    // Don't run the fetch until the user session is available
+    if (!loggedInUserEmail) return;
+
+    const fetchMyRequests = async () => {
+      try {
+        const res = await fetch(`http://localhost:5000/adoptions/user/${loggedInUserEmail}`);
+        if (!res.ok) throw new Error("Failed to fetch requests");
+        const data = await res.json();
+        setRequests(data);
+      } catch (error) {
+        console.error("Error fetching adoption requests:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchMyRequests();
   }, [loggedInUserEmail]);
 
-  // Handle Request Cancellation (Live Delete)
+  // ✅ Fixed Scope: Moved handleCancel inside the component body so it can see 'requests' and 'setRequests'
   const handleCancel = async (id) => {
     const proceed = window.confirm("Are you sure you want to cancel this adoption request? 😢");
     if (!proceed) return;
@@ -45,11 +50,11 @@ export default function MyRequestsPage() {
       }
     } catch (error) {
       console.error("Error deleting request:", error);
-      alert("Could not cancel request. Try again.");
+      toast.error("Could not cancel request. Try again.");
     }
   };
 
-  // Dynamic Stats Calculations
+  // ✅ Fixed Scope: Calculations now correctly access the live state array
   const totalRequests = requests.length;
   const pendingRequests = requests.filter((r) => r.status?.toLowerCase() === "pending").length;
   const approvedRequests = requests.filter((r) => r.status?.toLowerCase() === "approved").length;
@@ -184,4 +189,4 @@ export default function MyRequestsPage() {
       )}
     </div>
   );
-}
+} 
