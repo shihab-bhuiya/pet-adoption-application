@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import toast from "react-hot-toast";
 
 export default function MyListingsPage() {
   const [pets, setPets] = useState([]);
@@ -113,7 +114,7 @@ export default function MyListingsPage() {
                       </Link>
                       <button 
                         className="btn btn-sm btn-outline btn-error"
-                        onClick={() => alert("Delete functionality coming soon!")}
+                        onClick={() => toast.error("Delete functionality coming soon!")}
                       >
                         Delete
                       </button>
