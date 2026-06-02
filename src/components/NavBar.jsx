@@ -18,7 +18,7 @@ const NavBar = () => {
             <div>
                 <ul className='flex gap-4 text-lg items-center'>
                     <li> <Link href={'/'}>Home</Link></li>
-                    <li> <Link href={'/all-pets'}>All Pets</Link></li>
+                    <li> <Link href={'/pets'}>All Pets</Link></li>
                 </ul>
             </div>
             <div>
