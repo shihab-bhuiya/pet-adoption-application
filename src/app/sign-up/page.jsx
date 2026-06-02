@@ -43,6 +43,12 @@ export default function SignUp() {
   }
 };
 
+const signInGoogle = async () => {
+  const data = await authClient.signIn.social({
+    provider: "google",
+  });
+};
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow">
@@ -63,7 +69,11 @@ export default function SignUp() {
         <p className="text-center mt-4 text-sm">
           Already have account? <Link href="/login" className="text-green-600">Login</Link>
         </p>
+       <button onClick={signInGoogle} className="btn btn-outline btn-primary w-full">
+          Continue with Google
+        </button>
       </div>
+
     </div>
   );
 }

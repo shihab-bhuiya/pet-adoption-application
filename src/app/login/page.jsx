@@ -35,6 +35,12 @@ else{
   
   };
 
+  const signInGoogle = async () => {
+  const data = await authClient.signIn.social({
+    provider: "google",
+  });
+};
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
 
@@ -58,6 +64,11 @@ else{
         <p className="text-center mt-4 text-sm">
           Don’t have account? <Link href="/sign-up" className="text-green-600">Sign Up</Link>
         </p>
+        <hr />
+        <h2 className="  text-center">or </h2>
+        <button onClick={signInGoogle} className="btn btn-outline btn-primary w-full">
+          Continue with Google
+        </button>
 
       </div>
 
