@@ -1,6 +1,7 @@
 "use client";
 
 import { authClient } from "@/lib/auth-client";
+import { router } from "better-auth/api";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import toast from "react-hot-toast";
@@ -23,6 +24,7 @@ export default function Login() {
 if(data){
     toast("Login successful");
 
+    router.push('/');
     redirect('/');
 }
 else{
