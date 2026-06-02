@@ -2,8 +2,10 @@
 
 import { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
-import { MapPin, PawPrint, Heart, Calendar, ShieldCheck, Mail } from "lucide-react";
+import Link from "next/link";
+import { MapPin, PawPrint, Heart, Calendar, ShieldCheck, Mail, MessageSquare, Edit3, Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
+import { authClient } from "@/lib/auth-client"; // ✅ Import Better Auth
 
 export default function PetDetailsPage({ params: paramsPromise }) {
   const params = use(paramsPromise);
@@ -14,8 +16,9 @@ export default function PetDetailsPage({ params: paramsPromise }) {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
-  // Temporary hardcoded requester email until Better Auth session is ready
-  const loggedInUserEmail = "user@gmail.com";
+  // ✅ Get real logged-in user email from Better Auth session
+  const { data: session } = authClient.useSession();
+  const loggedInUserEmail = session?.user?.email;
 
   useEffect(() => {
     const fetchPetDetails = async () => {
@@ -35,21 +38,75 @@ export default function PetDetailsPage({ params: paramsPromise }) {
     if (petId) fetchPetDetails();
   }, [petId]);
 
+  // ✅ Handle Delete Action (Protected: Double checks ownership before executing)
+  const handleDelete = async () => {
+    if (!loggedInUserEmail || loggedInUserEmail !== pet.ownerEmail) {
+      toast.error("Unauthorized: Only the pet owner can delete this listing.");
+      return;
+    }
+
+    toast((t) => (
+      <span>
+        Are you sure you want to delete this pet listing?{" "}
+        <button
+          className="btn btn-xs btn-error ml-2 text-white"
+          onClick={async () => {
+            toast.dismiss(t.id);
+            try {
+              const res = await fetch(`http://localhost:5000/pets/${pet._id}`, {
+                method: "DELETE",
+              });
+              const data = await res.json();
+              if (data.deletedCount > 0) {
+                toast.success("Pet listing deleted successfully!");
+                router.push("/dashboard/my-listings"); // Redirect back to owner listings page
+              } else {
+                toast.error("Could not delete. Try again.");
+              }
+            } catch (error) {
+              console.error("Error deleting pet:", error);
+              toast.error("Something went wrong. Try again.");
+            }
+          }}
+        >
+          Yes, Delete
+        </button>
+        <button
+          className="btn btn-xs btn-outline ml-1"
+          onClick={() => toast.dismiss(t.id)}
+        >
+          Cancel
+        </button>
+      </span>
+    ), { duration: 6000 });
+  };
+
   const handleAdoptSubmit = async (e) => {
     e.preventDefault();
+
+    // ✅ Block submission if user is not logged in
+    if (!loggedInUserEmail) {
+      toast.error("You must be logged in to adopt a pet.");
+      return;
+    }
+
+    // ✅ Block owner from adopting their own pet
+    if (loggedInUserEmail === pet.ownerEmail) {
+      toast.error("You cannot adopt your own pet! 😅");
+      return;
+    }
+
     setSubmitting(true);
 
     const formData = new FormData(e.currentTarget);
     const pickupDate = formData.get("pickupDate");
+    const userMessage = formData.get("message");
 
     const adoptionRequest = {
       petId: pet._id,
-      petName: pet.petName,
-      ownerEmail: pet.ownerEmail,
       requesterEmail: loggedInUserEmail,
       pickupDate: pickupDate,
-      location: pet.location,
-      image: pet.image
+      message: userMessage || "I promise to give this sweet pet a loving home!",
     };
 
     try {
@@ -63,12 +120,12 @@ export default function PetDetailsPage({ params: paramsPromise }) {
 
       const data = await res.json();
 
-      if (data.insertedId) {
+      if (res.ok) {
         toast.success("Adoption application submitted successfully! 🎉");
-        // Close the modal
         document.getElementById("adoption_modal").close();
-        // Redirect to user's requests dashboard page
         router.push("/dashboard/my-requests");
+      } else {
+        toast.error(data.message || "Could not submit request. Try again.");
       }
     } catch (error) {
       console.error("Error submitting adoption:", error);
@@ -87,7 +144,11 @@ export default function PetDetailsPage({ params: paramsPromise }) {
   }
 
   if (!pet) {
-    return <div className="text-center p-12 text-red-500 font-bold">Pet profile not found.</div>;
+    return (
+      <div className="text-center p-12 text-red-500 font-bold">
+        Pet profile not found.
+      </div>
+    );
   }
 
   return (
@@ -150,7 +211,9 @@ export default function PetDetailsPage({ params: paramsPromise }) {
                 <MapPin className="text-amber-500" size={20} />
                 <div>
                   <p className="text-xs text-gray-400 font-medium">Location</p>
-                  <p className="font-bold text-slate-700 truncate max-w-[150px]">{pet.location}</p>
+                  <p className="font-bold text-slate-700 truncate max-w-[150px]">
+                    {pet.location}
+                  </p>
                 </div>
               </div>
             </div>
@@ -177,28 +240,53 @@ export default function PetDetailsPage({ params: paramsPromise }) {
               <span className="truncate">Listed by: {pet.ownerEmail}</span>
             </div>
 
-            <button
-              onClick={() => document.getElementById("adoption_modal").showModal()}
-              className="btn btn-secondary text-white font-bold px-8 flex-1 shadow"
-            >
-              Adopt {pet.petName} Now 🐾
-            </button>
+            {/* ✅ STRICT PROTECTION: Show Edit/Delete ONLY if the current logged-in user is the pet owner */}
+            {loggedInUserEmail && loggedInUserEmail === pet.ownerEmail ? (
+              <div className="flex gap-2 flex-1">
+                <Link
+                  href={`/dashboard/update-pet/${pet._id}`}
+                  className="btn btn-warning text-white font-bold flex-1 gap-1 shadow"
+                >
+                  <Edit3 size={16} /> Edit Listing
+                </Link>
+                <button
+                  onClick={handleDelete}
+                  className="btn btn-error text-white font-bold flex-1 gap-1 shadow"
+                >
+                  <Trash2 size={16} /> Delete Listing
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => {
+                  if (!loggedInUserEmail) {
+                    toast.error("Please log in to adopt a pet.");
+                    return;
+                  }
+                  document.getElementById("adoption_modal").showModal();
+                }}
+                className="btn btn-secondary text-white font-bold px-8 flex-1 shadow"
+              >
+                Adopt {pet.petName} Now 🐾
+              </button>
+            )}
           </div>
         </div>
       </div>
 
-      {/* ======================================================== */}
       {/* DAISYUI POPUP MODAL DIALOG */}
-      {/* ======================================================== */}
       <dialog id="adoption_modal" className="modal modal-bottom sm:modal-middle">
         <div className="modal-box bg-white rounded-2xl p-6">
           <h3 className="font-extrabold text-2xl text-slate-800 mb-2">Request Adoption</h3>
           <p className="text-gray-500 text-sm mb-4">
-            You are applying to adopt <strong className="text-secondary">{pet.petName}</strong>. Please schedule a pickup date with the owner below.
+            You are applying to adopt{" "}
+            <strong className="text-secondary">{pet.petName}</strong>. Please
+            provide your configuration options to the owner below.
           </p>
 
           <form onSubmit={handleAdoptSubmit}>
-            <div className="form-control w-full mb-6">
+            {/* Input 1: Pickup Date Selection */}
+            <div className="form-control w-full mb-4">
               <label className="label">
                 <span className="label-text font-bold text-gray-600 flex items-center gap-1">
                   <Calendar size={16} /> Choose a Pickup Date
@@ -207,9 +295,25 @@ export default function PetDetailsPage({ params: paramsPromise }) {
               <input
                 type="date"
                 name="pickupDate"
-                className="input input-bordered w-full text-slate-700"
+                className="input input-bordered w-full text-slate-700 bg-white"
                 required
               />
+            </div>
+
+            {/* Input 2: Message Note TextArea */}
+            <div className="form-control w-full mb-6">
+              <label className="label">
+                <span className="label-text font-bold text-gray-600 flex items-center gap-1">
+                  <MessageSquare size={16} /> Note to Pet Owner
+                </span>
+              </label>
+              <textarea
+                name="message"
+                className="textarea textarea-bordered h-24 w-full text-slate-700 bg-white"
+                placeholder="Tell the owner why you are a great fit for this pet..."
+                defaultValue="I promise to give this sweet pet a loving home!"
+                required
+              ></textarea>
             </div>
 
             {/* Action Buttons inside Form */}
