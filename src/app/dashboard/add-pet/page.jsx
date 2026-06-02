@@ -1,17 +1,43 @@
 "use client";
 
+import toast from "react-hot-toast";
+
 export default function AddPetPage() {
 
-  const handleAddPet = async (e) => {
+const handleAddPet = async (e) => {
     e.preventDefault();
 
-    const formData = new FormData(e.currentTarget);
+    // 1. Capture the form reference immediately before any async await!
+    const form = e.currentTarget; 
+
+    const formData = new FormData(form);
     const petData = Object.fromEntries(formData.entries());
 
-    console.log(petData);
+    // Convert age and adoptionFee to numbers
+    petData.age = Number(petData.age);
+    petData.adoptionFee = Number(petData.adoptionFee);
 
-    // API Call Here
-    // await fetch(...)
+    try {
+      const res = await fetch("http://localhost:5000/pets", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(petData),
+      });
+
+      const data = await res.json();
+      
+      if (data.insertedId) {
+        toast.success("Pet added successfully! 🎉");
+        
+        // 2. Use the stored form reference here instead of e.currentTarget
+        form.reset(); 
+      }
+    } catch (error) {
+      console.error("Error adding pet:", error);
+      toast.error("Something went wrong. Please try again.");
+    }
   };
 
   return (
