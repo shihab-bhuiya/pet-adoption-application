@@ -8,7 +8,7 @@ export default function UpdatePetPage({ params: paramsPromise }) {
   // Unwrap params using React.use() hook as required by newer Next.js versions
   const params = use(paramsPromise);
   const petId = params.id;
-  
+
   const router = useRouter();
   const [pet, setPet] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -40,7 +40,7 @@ export default function UpdatePetPage({ params: paramsPromise }) {
     const updatedData = Object.fromEntries(formData.entries());
 
     try {
-      const res = await fetch(`http://localhost:5000/pets/${petId}`, {
+      const res = await fetch(`https://pet-adoption-application-server.vercel.app/pets/${petId}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -83,7 +83,7 @@ export default function UpdatePetPage({ params: paramsPromise }) {
 
       <div className="bg-white rounded-2xl shadow border p-6">
         <form onSubmit={handleUpdatePet} className="grid md:grid-cols-2 gap-5">
-          
+
           {/* Pet Name */}
           <div>
             <label className="label"><span className="label-text">Pet Name</span></label>
@@ -230,9 +230,9 @@ export default function UpdatePetPage({ params: paramsPromise }) {
             <button type="submit" className="btn btn-primary flex-1">
               Save Changes
             </button>
-            <button 
-              type="button" 
-              onClick={() => router.push("/dashboard/my-listings")} 
+            <button
+              type="button"
+              onClick={() => router.push("/dashboard/my-listings")}
               className="btn btn-outline flex-1"
             >
               Cancel

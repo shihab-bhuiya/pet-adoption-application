@@ -4,10 +4,14 @@ import { useEffect, useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import toast from "react-hot-toast";
 import Link from "next/link";
+import { Search } from "lucide-react"; // Imported for search input styling
 
 export default function PublicPetsPage() {
   const [pets, setPets] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // 🔍 SEARCH STATE
+  const [searchQuery, setSearchQuery] = useState("");
 
   // 🔥 MODAL STATES (replacement of prompt)
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -20,7 +24,7 @@ export default function PublicPetsPage() {
   useEffect(() => {
     const fetchPublicPets = async () => {
       try {
-        const res = await fetch("http://localhost:5000/public-pets", {
+        const res = await fetch("https://pet-adoption-application-server.vercel.app/public-pets", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -43,6 +47,17 @@ export default function PublicPetsPage() {
 
     fetchPublicPets();
   }, []);
+
+  // 🔍 FILTERED PETS COMPUTATION
+  const filteredPets = pets.filter((pet) => {
+    const query = searchQuery.toLowerCase();
+    return (
+      pet.petName?.toLowerCase().includes(query) ||
+      pet.breed?.toLowerCase().includes(query) ||
+      pet.species?.toLowerCase().includes(query) ||
+      pet.location?.toLowerCase().includes(query)
+    );
+  });
 
   // 🔥 OPEN MODAL (instead of prompt)
   const handleAdoptRequest = (pet) => {
@@ -76,7 +91,7 @@ export default function PublicPetsPage() {
     const loadingToast = toast.loading("Sending adoption request...");
 
     try {
-      const res = await fetch("http://localhost:5000/adoptions", {
+      const res = await fetch("https://pet-adoption-application-server.vercel.app/adoptions", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -116,7 +131,7 @@ export default function PublicPetsPage() {
     <div className="max-w-7xl mx-auto p-6">
 
       {/* HEADER */}
-      <div className="text-center mb-12">
+      <div className="text-center mb-8">
         <h1 className="text-4xl font-extrabold tracking-tight">
           Available Pets for Adoption
         </h1>
@@ -132,33 +147,50 @@ export default function PublicPetsPage() {
         )}
       </div>
 
-      {/* PET GRID (UNCHANGED SAFE AREA) */}
-      {pets.length === 0 ? (
-        <div className="text-center p-12 border bg-white rounded-2xl shadow-sm">
+      {/* 🔍 SEARCH BAR COMPONENT SECTION */}
+      <div className="max-w-md mx-auto mb-12">
+        <div className="relative flex items-center w-full h-12 rounded-xl border bg-white overflow-hidden shadow-xs focus-within:ring-2 focus-within:ring-primary focus-within:border-transparent transition-all">
+          <div className="grid place-items-center h-full w-12 text-gray-400">
+            <Search size={20} />
+          </div>
+          <input
+            className="peer h-full w-full outline-none text-sm text-slate-700 pr-2 bg-transparent"
+            type="text"
+            id="search"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search by name, breed, species, or location..."
+          />
+        </div>
+      </div>
+
+      {/* PET GRID */}
+      {filteredPets.length === 0 ? (
+        <div className="text-center p-12 border bg-white rounded-2xl shadow-sm max-w-md mx-auto">
           <h3 className="text-lg font-medium text-gray-600">
-            No pets available right now
+            No matching pets found
           </h3>
           <p className="text-gray-400 mt-1">
-            Check back later or post your own listing!
+            Try adjusting your search criteria or look for something else!
           </p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
 
-          {pets.map((pet) => (
+          {filteredPets.map((pet) => (
             <div
               key={pet._id}
               className="card bg-white border shadow-sm rounded-2xl overflow-hidden hover:shadow-md transition-shadow duration-300"
             >
 
-              {/* IMAGE (UNCHANGED) */}
+              {/* IMAGE */}
               <figure className="relative h-56 bg-gray-100">
                 <img
                   src={pet.image || "https://placehold.co/400x300"}
                   alt={pet.petName}
                   className="w-full h-full object-cover"
                   onError={(e) => {
-                    e.target.src = "https://placehold.co/400x300";
+                    e.currentTarget.src = "https://placehold.co/400x300";
                   }}
                 />
 

@@ -23,7 +23,7 @@ export default function PetDetailsPage({ params: paramsPromise }) {
   useEffect(() => {
     const fetchPetDetails = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/pets/${petId}`);
+        const res = await fetch(`https://pet-adoption-application-server.vercel.app/pets/${petId}`);
         if (!res.ok) throw new Error("Pet not found");
         const data = await res.json();
         setPet(data);
@@ -53,7 +53,7 @@ export default function PetDetailsPage({ params: paramsPromise }) {
           onClick={async () => {
             toast.dismiss(t.id);
             try {
-              const res = await fetch(`http://localhost:5000/pets/${pet._id}`, {
+              const res = await fetch(`https://pet-adoption-application-server.vercel.app/pets/${pet._id}`, {
                 method: "DELETE",
               });
               const data = await res.json();
@@ -110,7 +110,7 @@ export default function PetDetailsPage({ params: paramsPromise }) {
     };
 
     try {
-      const res = await fetch("http://localhost:5000/adoptions", {
+      const res = await fetch("https://pet-adoption-application-server.vercel.app/adoptions", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -21,7 +21,7 @@ export default function Banner() {
           <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
 
             <Link
-              href="/all-pets"
+              href="/pets"
               className="btn btn-primary px-6 py-3 text-white"
             >
               Adopt Now

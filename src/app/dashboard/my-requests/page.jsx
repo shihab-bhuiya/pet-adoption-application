@@ -36,7 +36,7 @@ export default function MyIncomingRequestsPage() {
   // ✅ Handle Approve Action
   const handleApprove = async (id) => {
     try {
-      const res = await fetch(`http://localhost:5000/adoptions/${id}/approve`, {
+      const res = await fetch(`https://pet-adoption-application-server.vercel.app/adoptions/${id}/approve`, {
         method: "PATCH",
       });
       const data = await res.json();
@@ -56,10 +56,10 @@ export default function MyIncomingRequestsPage() {
   // ✅ Handle Reject Action
   const handleReject = async (id) => {
     try {
-      const res = await fetch(`http://localhost:5000/adoptions/${id}/reject`, {
+      const res = await fetch(`https://pet-adoption-application-server.vercel.app/adoptions/${id}/reject`, {
         method: "PATCH",
       });
-      
+
       if (res.ok) {
         toast.success("Request rejected.");
         setRequests((prev) =>
@@ -161,9 +161,8 @@ export default function MyIncomingRequestsPage() {
                     {request.message || "No message attached."}
                   </td>
                   <td>
-                    <span className={`badge gap-1 text-white font-medium ${
-                      request.status === "approved" ? "badge-success" : request.status === "rejected" ? "badge-error" : "badge-warning"
-                    }`}>
+                    <span className={`badge gap-1 text-white font-medium ${request.status === "approved" ? "badge-success" : request.status === "rejected" ? "badge-error" : "badge-warning"
+                      }`}>
                       {request.status === "pending" && <Clock size={12} />}
                       {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
                     </span>

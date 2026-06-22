@@ -22,7 +22,7 @@ export default function AddPetPage() {
     }
 
     // 1. Capture the form reference immediately before any async await!
-    const form = e.currentTarget; 
+    const form = e.currentTarget;
     setSubmitting(true);
 
     const formData = new FormData(form);
@@ -31,12 +31,12 @@ export default function AddPetPage() {
     // Convert age and adoptionFee to numbers
     petData.age = Number(petData.age);
     petData.adoptionFee = Number(petData.adoptionFee);
-    
+
     // ✅ Overwrite/ensure payload points exactly to your active authenticated email account
     petData.ownerEmail = loggedInUserEmail;
 
     try {
-      const res = await fetch("http://localhost:5000/pets", {
+      const res = await fetch("https://pet-adoption-application-server.vercel.app//pets", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -45,13 +45,13 @@ export default function AddPetPage() {
       });
 
       const data = await res.json();
-      
+
       if (data.insertedId) {
         toast.success("Pet added successfully! 🎉");
-        
+
         // 2. Use the stored form reference here instead of e.currentTarget
-        form.reset(); 
-        
+        form.reset();
+
         // ✅ Redirect to My Listings page so the user sees their new addition instantly
         router.push("/dashboard/my-listings");
       } else {

@@ -40,7 +40,7 @@ export default function MyListingsPage() {
 
       try {
 
-        const res = await fetch(`http://localhost:5000/pets/owner/${loggedInUserEmail}`);
+        const res = await fetch(`https://pet-adoption-application-server.vercel.app/pets/owner/${loggedInUserEmail}`);
 
         const data = await res.json();
 
@@ -88,7 +88,7 @@ export default function MyListingsPage() {
 
             try {
 
-              const res = await fetch(`http://localhost:5000/pets/${id}`, {
+              const res = await fetch(`https://pet-adoption-application-server.vercel.app/pets/${id}`, {
 
                 method: "DELETE",
 
