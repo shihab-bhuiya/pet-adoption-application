@@ -17,7 +17,7 @@ export default function MyIncomingRequestsPage() {
   const fetchIncomingRequests = async () => {
     if (!loggedInUserEmail) return;
     try {
-      const res = await fetch(`http://localhost:5000/adoptions/owner/${loggedInUserEmail}`);
+      const res = await fetch(`https://pet-adoption-application-server.vercel.app/adoptions/owner/${loggedInUserEmail}`);
       if (!res.ok) throw new Error("Failed to fetch requests");
       const data = await res.json();
       setRequests(data);

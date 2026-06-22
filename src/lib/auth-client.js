@@ -2,7 +2,7 @@
 import { createAuthClient } from "better-auth/react";
 
 export const authClient = createAuthClient({
-  baseURL: "http://localhost:3000",  // ✅ hardcode for now
+  baseURL: "https://pet-adoption-application-chi.vercel.app",  // ✅ hardcode for now
 });
 
 export const { signIn, signUp, useSession } = authClient;

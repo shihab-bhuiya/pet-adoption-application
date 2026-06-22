@@ -36,7 +36,7 @@ export default function AddPetPage() {
     petData.ownerEmail = loggedInUserEmail;
 
     try {
-      const res = await fetch("https://pet-adoption-application-server.vercel.app//pets", {
+      const res = await fetch("https://pet-adoption-application-server.vercel.app/pets", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
