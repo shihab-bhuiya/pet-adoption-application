@@ -5,6 +5,7 @@ import { mongodbAdapter } from "better-auth/adapters/mongodb";
 const client = new MongoClient(process.env.MONGODB_URI);
 await client.connect();
 const db = client.db('pet-adoption');
+// __________________________________
 
 export const auth = betterAuth({
   secret: process.env.BETTER_AUTH_SECRET,           // ✅ add secret
