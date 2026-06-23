@@ -1,36 +1,52 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Paws & Hearts | Full-Stack Pet Adoption Platform
 
-## Getting Started
+A robust, full-stack pet adoption portal built using the MERN stack. The platform bridges the gap between animal shelters/pet owners and individuals looking to adopt. Users can seamlessly browse available pets, filter by categories, and submit adoption requests. Pet owners have access to a dedicated management dashboard to track listings and process adoption applications securely.
 
-First, run the development server:
+**Live Website Link:** https://pet-adoption-application-chi.vercel.app
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🚀 Purpose
+The primary goal of **Paws & Hearts** is to streamline the pet adoption ecosystem, making it safer, more efficient, and accessible. By replacing fragmented social media posts with a structured CRUD-based system, the platform ensures that detailed pet profiles (including health and vaccination status) are transparently displayed, while secure authentication ensures genuine tracking of adoption requests.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## ✨ Features
+*   **Advanced Search & Filtering:** Browse pets dynamically using regular expression (`$regex`) name search and category filtering (`$in`) for species like Dogs, Cats, Birds, and Rabbits.
+*   **Comprehensive Dashboard Layout:** Features private dashboards split cleanly between *My Requests* (for adopters) and *My Listings* (for pet owners/shelters).
+*   **Secure Adoption Controls:** Prevents pet owners from adopting their own listings. If multiple adoption requests exist for a pet, approving one automatically marks the pet as "Adopted" and locks further incoming requests.
+*   **Robust Authentication System:** Includes custom Email/Password registration with strict password criteria, alongside seamless Google OAuth integration.
+*   **Route Persistence:** Secure route handling ensuring that authenticated users are never redirected back to the login page upon browser hard-reloads.
+*   **Fully Responsive UI:** A modern, clean, and recruiter-friendly aesthetic optimized across mobile, tablet, and desktop viewports with custom UI toast notifications (no native alerts).
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 🛠️ NPM Packages Used
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Client-Side (`/client`)
+*   `react` & `react-dom` - Core frontend UI rendering
+*   `react-router-dom` - Client-side routing & private route protection
+*   `axios` - Promise-based HTTP client for secure API calls
+*   `Better Auth` - Authentication provider (Google Login & Email/Password)
+*   `react-hook-form` - Optimized form management and validation
+*   `react-hot-toast` (or `react-toastify`) - Elegant UI-based notifications
+*   `lucide-react` (or `react-icons`) - Modern UI icon packs
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
+### Server-Side (`/server`)
+*   `express` - Minimalist web framework for Node.js
+*   `mongodb` - Official MongoDB driver for database interaction
+*   `dotenv` - Secure environment variable management
+*   `cors` - Cross-Origin Resource Sharing middleware
+*   `jsonwebtoken` (JWT) - Secure stateless token generation and verification
+*   `cookie-parser` - Parsing HTTPOnly cookies for secure token storage
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🛠️ Local Installation & Setup
+
+### Prerequisites
+*   Node.js (v18 or higher)
+*   MongoDB Atlas Account
+*   Better Auth Project Setup
+
