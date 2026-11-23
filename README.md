@@ -2,7 +2,7 @@
 
 A robust, full-stack pet adoption portal built using the MERN stack. The platform bridges the gap between animal shelters/pet owners and individuals looking to adopt. Users can seamlessly browse available pets, filter by categories, and submit adoption requests. Pet owners have access to a dedicated management dashboard to track listings and process adoption applications securely.
 
-**Live Website Link:** https://pet-adoption-application-chi.vercel.app
+**Live Website Link:** https://pet-adoption-application-chi.vercel.app 
 
 ---
 
